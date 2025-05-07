@@ -42,6 +42,7 @@ class MainGUI:
         categorychoice = -1
 
         def change_list():
+            nonlocal categorychoice
             category_list = get_category()
             item_list = get_item()
             item_list_remade = []
@@ -58,7 +59,8 @@ class MainGUI:
                         if item_list[i][3] == category_list[b][0]:
                             temp.append(category_list[b][1])                    
                     item_list_remade.append(temp)
-                elif categorychoice != -1:
+                    print("---")
+                elif categorychoice > 0:
                     if categorychoice == item_list[i][3]:
                         temp = []
                         temp.append(item_list[i][1])
@@ -67,6 +69,8 @@ class MainGUI:
                                 if item_list[i][3] == category_list[b][0]:
                                     temp.append(category_list[b][1])   
                         item_list_remade.append(temp)
+                        print("---3333")
+            categorychoice = -1
 
             
             category_listbox.delete(0, END)
@@ -227,6 +231,8 @@ class MainGUI:
             try:
                 selected_category_id = category_list[selected[0]][0]
                 categorychoice = category_list[selected[0]][0]
+                print(categorychoice)
+                change_list()
             except:
                 return
 
@@ -238,6 +244,7 @@ class MainGUI:
             try:
                 selected_item_id = item_list[selected[0]][0]
                 selected_category_id = item_list[selected[0]][3]
+                change_list()
                 
             except:
                 return
