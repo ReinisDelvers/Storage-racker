@@ -29,30 +29,63 @@ class MainGUI:
 
 
         category_list = get_category()
-        if len(category_list)+1 > 4:
+        if len(category_list)+1 > 5:
             for i in range(len(category_list)+1):
                 self.window.columnconfigure(i, weight=1)
         else:
-            for i in range(4):
+            for i in range(5):
                 self.window.columnconfigure(i, weight=1)
         
         selected_category_id = None
         selected_item_id = None
-        categoryoritem = None
+        categoryoritem = 0
+        categorychoice = -1
 
         def change_list():
             category_list = get_category()
             item_list = get_item()
-            item_list_remade
-            category_list_remade 
+            item_list_remade = []
+            category_list_remade = []
+
+            for i in range(len(category_list)):
+                category_list_remade.append(category_list[i][1])
+            for i in range(len(item_list)):
+                if categorychoice == -1:
+                    temp = []
+                    temp.append(item_list[i][1])
+                    temp.append(item_list[i][2])
+                    for b in range(len(category_list)):
+                        if item_list[i][3] == category_list[b][0]:
+                            temp.append(category_list[b][1])                    
+                    item_list_remade.append(temp)
+                elif categorychoice != -1:
+                    if categorychoice == item_list[i][3]:
+                        temp = []
+                        temp.append(item_list[i][1])
+                        temp.append(item_list[i][2])
+                        for b in range(len(category_list)):
+                                if item_list[i][3] == category_list[b][0]:
+                                    temp.append(category_list[b][1])   
+                        item_list_remade.append(temp)
+
             
             category_listbox.delete(0, END)
             item_listbox.delete(0, END)
 
-            for item in category_list:
+            for item in category_list_remade:
                 category_listbox.insert("end", f"{item}")
-            for item in item_list:
+            for item in item_list_remade:
                 item_listbox.insert("end", f"{item}")
+
+            
+            category_listbox.delete(0, END)
+            item_listbox.delete(0, END)
+
+            for item in category_list_remade:
+                category_listbox.insert("end", f"{item}")
+            for item in item_list_remade:
+                item_listbox.insert("end", f"{item}")
+
 
         def item_add():
             nonlocal selected_category_id
@@ -60,11 +93,11 @@ class MainGUI:
             item_list = get_item()
             item_name = ent1.get()
             item_count = ent2.get()
-            for i in range(len(category_list)):
-                for b in range(len(item_list)):
-                    if  selected_category_id == category_list[i][1] and item_name == item_list[b][1]:
-                        showerror("Error", "This item already exists.")
-                        return
+    
+            for i in range(len(item_list)):
+                if  item_name == item_list[i][1]:
+                    showerror("Error", "This item already exists.")
+                    return
             try:
                 int(item_count)
             except:
@@ -81,7 +114,7 @@ class MainGUI:
             category_list = get_category()
             category_name = ent1.get()
             for i in range(len(category_list)):
-                if  selected_category_id == category_list[i][1]:
+                if  category_name == category_list[i][1]:
                     showerror("Error", "This category already exists.")
                     return
             if category_name:
@@ -148,6 +181,7 @@ class MainGUI:
                 for i in item_selected:
                     selected_id.append(item_list[i][0])
                 remove_item(selected_id)
+            categoryoritem == 0
             change_list()
 
         def confirm_edit():
@@ -186,14 +220,16 @@ class MainGUI:
 
 
         def category_on_selection(useless):
-            nonlocal selected_category_id, categoryoritem
+            nonlocal selected_category_id, categoryoritem, categorychoice
             category_list = get_category()
+            categoryoritem = 1
             selected = list(category_listbox.curselection())
             try:
                 selected_category_id = category_list[selected[0]][0]
-                categoryoritem = 1
+                categorychoice = category_list[selected[0]][0]
             except:
                 return
+
                         
         def item_on_selection(useless):
             nonlocal selected_item_id, selected_category_id, categoryoritem
@@ -202,31 +238,39 @@ class MainGUI:
             try:
                 selected_item_id = item_list[selected[0]][0]
                 selected_category_id = item_list[selected[0]][3]
-                categoryoritem = 2
+                
             except:
                 return
+
+            
             
         btn1 = tk.Button(self.window, text="Add category", font=("Arial", 18), command=category_add)
-        btn1.grid(row=0, column=1, sticky=tk.W+tk.E, **options)
+        btn1.grid(row=0, column=2, sticky=tk.W+tk.E, **options)
 
         btn2 = tk.Button(self.window, text="Add item", font=("Arial", 18), command=item_add)
-        btn2.grid(row=0, column=2, sticky=tk.W+tk.E, **options)
+        btn2.grid(row=0, column=3, sticky=tk.W+tk.E, **options)
 
         btn3 = tk.Button(self.window, text="Edit", font=("Arial", 18), command=edit)
-        btn3.grid(row=1, column=1, sticky=tk.W+tk.E, **options)
+        btn3.grid(row=1, column=2, sticky=tk.W+tk.E, **options)
 
         btn4 = tk.Button(self.window, text="Confirm edit", font=("Arial", 18), command=confirm_edit)
-        btn4.grid(row=1, column=2, sticky=tk.W+tk.E, **options)
+        btn4.grid(row=1, column=3, sticky=tk.W+tk.E, **options)
 
         btn5 = tk.Button(self.window, text="Remove", font=("Arial", 18), command=remove)
-        btn5.grid(row=1, column=3, sticky=tk.W+tk.E, **options)
+        btn5.grid(row=1, column=4, sticky=tk.W+tk.E, **options)
 
 
         ent1 = tk.Entry(self.window,  font=("Arial", 18))
-        ent1.grid(row=0, column=0, sticky=tk.W+tk.E, **options)
+        ent1.grid(row=1, column=0, sticky=tk.W+tk.E, **options)
 
         ent2 = tk.Entry(self.window,  font=("Arial", 18))
-        ent2.grid(row=1, column=0, sticky=tk.W+tk.E, **options)
+        ent2.grid(row=1, column=1, sticky=tk.W+tk.E, **options)
+
+        label1 = tk.Label(self.window, text="Name", font=("Arial", 18))
+        label1.grid(row=0, column=0, sticky=tk.W+tk.E, **options)
+
+        label2 = tk.Label(self.window, text="Amount", font=("Arial", 18))
+        label2.grid(row=0, column=1, sticky=tk.W+tk.E, **options)
 
 
         category_listbox = tk.Listbox(self.window, selectmode=tk.EXTENDED, font=("Arial", 18))
